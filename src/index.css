@@ -67,3 +67,11 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+html, body, #root {
+  margin: 0;              /* ← 預設 8px 會造成左/右邊露底 */
+  padding: 0;
+  height: 100%;
+}
+
+* { box-sizing: border-box; }
