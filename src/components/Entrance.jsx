@@ -35,11 +35,9 @@ export default function Entrance() {
     <Box
       data-hero
       sx={{
-        width: "100vw",
         bgcolor: "#fff",
         minHeight: "300vh",
         position: "relative",
-        overflowX: "hidden",
       }}
     >
       {/* ★ Hero 包裝器：把首屏所有東西包起來，對 wrapper 做 opacity/y 動畫 */}
@@ -66,7 +64,6 @@ export default function Entrance() {
           component={motion.div}
           direction="row"
           style={{
-            gap,
             height: navHeightSpring,
             paddingTop: padY,
             backgroundColor: navBg,
@@ -80,13 +77,21 @@ export default function Entrance() {
             left: 0,
             right: 0,
             alignItems: "center",
+            justifyContent: "center",
             zIndex: 3, // 在背景圖與標題之上
             px: 2,
           }}
         >
           <Stack
             direction="row"
-            sx={{ width: "100%", mx: "auto" }}
+            sx={{
+              width: "100%",
+              maxWidth: 960,
+              mx: "auto",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+            style={{ gap }}
           >
             <NavItem to="/about">About</NavItem>
             <NavItem to="/articles">Articles</NavItem>
@@ -96,23 +101,25 @@ export default function Entrance() {
           </Stack>
         </Stack>
 
-        {/* 中央標題 */}
         <Typography
           component={motion.h1}
-          style={{ scale: scaleLogo, margin: 0 }}
+          style={{
+            scale: scaleLogo,
+            translateX: "-50%", // ← 把位移也放進 style（同一個 transform 管道）
+            translateY: "-50%",
+          }}
           sx={{
-            color: "#fff",
             position: "absolute",
             top: "50%",
             left: "50%",
-            transform: "translate(-50%, -50%)",
+            color: "#fff",
+            m: 0,
             fontSize: "clamp(48px, 16vw, 220px)",
             fontWeight: 800,
             lineHeight: 1,
             letterSpacing: "-.02em",
             textShadow: "0 2px 16px rgba(0,0,0,.7)",
             zIndex: 2,
-            m: 0,
           }}
         >
           YuZheng
