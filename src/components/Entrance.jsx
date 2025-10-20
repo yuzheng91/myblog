@@ -1,119 +1,174 @@
-import React, { use } from "react";
+import React from "react";
 import { Box, Typography, Stack } from "@mui/material";
 import { Link } from "react-router-dom";
-import { motion, useScroll, useTransform, useSpring } from "framer-motion";
+import {
+  motion,
+  useScroll,
+  useTransform,
+  useSpring,
+  useMotionTemplate,
+} from "framer-motion";
 
 export default function Entrance() {
   const { scrollY } = useScroll();
-  const scaleLogo = useTransform(scrollY, [0, 200], [1, 0.6]);
-  const gap = useTransform(scrollY, [0, 200], [24, 12]);
-  const padY = useTransform(scrollY, [0, 200], [12, 6]);
-  const blurPx = useTransform(scrollY, [0, 200], [0, 8]);
-  const bgAlpha = useTransform(scrollY, [0, 200], [0.0, 0.16]);
-  const shadowA = useTransform(scrollY, [0, 200], [0, 0.35]);
-  const navHeight = useTransform(scrollY, [0, 200], [72, 52]);
-  const navHeightSpring = useSpring(navHeight, {
-    stiffness: 300,
-    damping: 30,
-  });
+
+  // --- 你原本的動畫值 ---
+  const scaleLogo = useTransform(scrollY, [0, 1000], [1, 0.6]);
+  const gap = useTransform(scrollY, [0, 1000], [24, 12]);
+  const padY = useTransform(scrollY, [0, 1000], [12, 6]);
+  const blurPx = useTransform(scrollY, [0, 1000], [0, 8]);
+  const bgAlpha = useTransform(scrollY, [0, 1000], [0, 0.16]);
+  const shadowA = useTransform(scrollY, [0, 1000], [0, 0.35]);
+  const navHeight = useTransform(scrollY, [0, 1000], [72, 52]);
+  const navHeightSpring = useSpring(navHeight, { stiffness: 300, damping: 30 });
+
+  const blurFilter = useMotionTemplate`blur(${blurPx}px)`;
+  const navBg = useMotionTemplate`rgba(15, 16, 20, ${bgAlpha})`;
+  const navShadow = useMotionTemplate`0 10px 30px rgba(0, 0, 0, ${shadowA})`;
+
+  // --- 新增：整個首屏的淡出/上推 ---
+  const heroOpacity = useTransform(scrollY, [0, 1000], [1, 0]); // 往下捲到 200px 完全透明
+  const heroY = useTransform(scrollY, [0, 1000], [0, -40]); // 可選：微微往上推，增強感覺
+
   return (
-    <>
+    // 整頁背景是白色，捲動後就露出來
+    <Box
+      data-hero
+      sx={{
+        width: "100vw",
+        bgcolor: "#fff",
+        minHeight: "300vh",
+        position: "relative",
+        overflowX: "hidden",
+      }}
+    >
+      {/* ★ Hero 包裝器：把首屏所有東西包起來，對 wrapper 做 opacity/y 動畫 */}
       <Box
-        sx={{
-          position: "absolute",
-          inset: 0, // top:0; right:0; bottom:0; left:0
-          backgroundImage: "url('/background.jpg')",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          backgroundRepeat: "no-repeat",
-          backgroundAttachment: "fixed",
-          zIndex: 1,
-        }}
-      />
-
-      {/* 上方導覽 */}
-      <Stack
         component={motion.div}
-        direction="row"
-        style={{
-          height: navHeightSpring,
-          paddingTop: padY,
-          //backgroundColor: bgAlpha.to(a => `rgba(15,16,20,${a})`),
-          //backdropFilter: blurPx.to(v =>`blur(${v}px)`),
-          //boxShadow: shadowA.to(a => `0 10px 30px rgba(0,0,0,${a})`),
-        }}
-        sx={{
-          position: "absolute",
-          top: { xs: 16, sm: 28 },
-          left: "50%",
-          transform: "translateX(-50%)",
-          alignItems: "center",
-          textShadow: "0 1px 4px rgba(0,0,0,.6)",
-          opacity: 0.8,
-          zIndex: 2,
-        }}
+        style={{ opacity: heroOpacity, y: heroY }}
+        sx={{ position: "relative", height: "100vh", width: "100%" }}
       >
-        <NavItem to="/about">About</NavItem>
-        <NavItem to="/articles">Articles</NavItem>
-        <NavItem to="https://github.com/yuzheng91?tab=repositories">
-          Github
-        </NavItem>
-      </Stack>
+        {/* 背景圖（填滿首屏高度） */}
+        <Box
+          sx={{
+            position: "absolute",
+            inset: 0,
+            backgroundImage: "url('/background.jpg')",
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            backgroundRepeat: "no-repeat",
+            zIndex: 1,
+          }}
+        />
 
-      {/* 中央標題 */}
-      <Typography
-        component={motion.h1}
-        style={{ scale: scaleLogo, margin: 0 }}
-        sx={{
-          position: "absolute",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
-          fontSize: "clamp(48px, 16vw, 220px)",
-          fontWeight: 800,
-          lineHeight: 1,
-          letterSpacing: "-.02em",
-          textShadow: "0 2px 16px rgba(0,0,0,.7)", // 讓亮背景上仍清楚
-          opacity: 1,
-          zIndex: 1,
-          m: 0,
-        }}
-      >
-        YuZheng
-      </Typography>
+        {/* 上方導覽（固定在視窗，會一起淡出，因為包在 hero wrapper） */}
+        <Stack
+          component={motion.div}
+          direction="row"
+          style={{
+            gap,
+            height: navHeightSpring,
+            paddingTop: padY,
+            backgroundColor: navBg,
+            backdropFilter: blurFilter,
+            WebkitBackdropFilter: blurFilter, // Safari
+            boxShadow: navShadow,
+          }}
+          sx={{
+            position: "fixed",
+            top: { xs: 16, sm: 28 },
+            left: 0,
+            right: 0,
+            alignItems: "center",
+            zIndex: 3, // 在背景圖與標題之上
+            px: 2,
+          }}
+        >
+          <Stack
+            direction="row"
+            sx={{ width: "100%", mx: "auto" }}
+          >
+            <NavItem to="/about">About</NavItem>
+            <NavItem to="/articles">Articles</NavItem>
+            <NavItem to="https://github.com/yuzheng91?tab=repositories">
+              Github
+            </NavItem>
+          </Stack>
+        </Stack>
 
-      {/* 下方小字 */}
-      <Typography
-        sx={{
-          position: "absolute",
-          bottom: { xs: 12, sm: 24 },
-          left: "50%",
-          transform: "translateX(-50%)",
-          fontSize: { xs: 12, sm: 14 },
-          letterSpacing: 1,
-          opacity: 0.5,
-          zIndex: 1,
-          m: 0, // ← 移除 h 標籤預設 margin 以免位移
-        }}
-      >
-        Learning Never Stops.
-      </Typography>
-    </>
+        {/* 中央標題 */}
+        <Typography
+          component={motion.h1}
+          style={{ scale: scaleLogo, margin: 0 }}
+          sx={{
+            color: "#fff",
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            fontSize: "clamp(48px, 16vw, 220px)",
+            fontWeight: 800,
+            lineHeight: 1,
+            letterSpacing: "-.02em",
+            textShadow: "0 2px 16px rgba(0,0,0,.7)",
+            zIndex: 2,
+            m: 0,
+          }}
+        >
+          YuZheng
+        </Typography>
+
+        {/* 下方小字 */}
+        <Typography
+          sx={{
+            position: "absolute",
+            bottom: { xs: 12, sm: 24 },
+            left: "50%",
+            transform: "translateX(-50%)",
+            fontSize: { xs: 12, sm: 14 },
+            letterSpacing: 1,
+            opacity: 0.6,
+            zIndex: 2,
+            m: 0,
+            color: "#fff",
+          }}
+        >
+          Learning Never Stops.
+        </Typography>
+      </Box>
+
+      {/* 底下內容：白底（真正被露出來的區域） */}
+      <Box sx={{ width: "100%", mx: "auto", px: 2, py: 6 }}>
+        <Typography variant="h4" gutterBottom>
+          Welcome
+        </Typography>
+        <Typography paragraph>
+          這裡放你的內容。往下捲時，上面的首屏會逐漸透明，露出這個白底區塊。
+        </Typography>
+        {/* …更多內容 */}
+      </Box>
+    </Box>
   );
 }
 
 function NavItem({ to, children }) {
+  const isExternal = typeof to === "string" && to.startsWith("http");
+  const baseProps = isExternal
+    ? { component: "a", href: to, target: "_blank", rel: "noopener noreferrer" }
+    : { component: Link, to };
+
   return (
     <Box
-      component={Link}
-      to={to}
+      {...baseProps}
+      component={motion.a}
+      whileHover={{ y: -1, opacity: 1 }}
+      whileTap={{ scale: 0.98 }}
       sx={{
         color: "#fff",
         textDecoration: "none",
         fontSize: { xs: 14, sm: 16 },
         opacity: 0.9,
         transition: "opacity .2s ease, transform .2s ease",
-        "&:hover": { opacity: 1, transform: "translateY(-1px)" },
       }}
     >
       {children}

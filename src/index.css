@@ -3,15 +3,17 @@
   line-height: 1.5;
   font-weight: 400;
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  /* 刪掉全域 background-color，讓頁面自己控制 */
+  /* background-color: #242424;  ← 移除 */
+  color-scheme: light;      /* 或保留你需要的方案 */
+  color: #213547;           /* 預設字色（依你需求） */
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
 
 a {
   font-weight: 500;
@@ -24,10 +26,12 @@ a:hover {
 
 body {
   margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
+  /* 刪掉 display:flex / place-items:center */
+  display: block;          /* 預設值，保證 #root 可撐滿 */
+  min-width: 0;            /* 不要強制 320px，避免影響響應式 */
+  min-height: 0;           /* 讓內層自己決定高度 */
+  background: #fff;        /* 你要露出的底色 */
+  color: #000;             /* 文字預設色 */
 }
 
 h1 {
@@ -68,9 +72,14 @@ button:focus-visible {
 }
 
 html, body, #root {
-  margin: 0;              /* ← 預設 8px 會造成左/右邊露底 */
-  padding: 0;
   height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
 }
+#root {
+  display: block;          /* 明確指定，避免被外部樣式影響 */
+}
+
 
 * { box-sizing: border-box; }
