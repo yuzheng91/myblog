@@ -12,41 +12,80 @@ import {
 export default function Entrance() {
   const { scrollY } = useScroll();
 
-  // --- 你原本的動畫值 ---
-  const scaleLogo = useTransform(scrollY, [0, 1000], [1, 0.6]);
-  const gap = useTransform(scrollY, [0, 1000], [24, 12]);
-  const padY = useTransform(scrollY, [0, 1000], [12, 6]);
+  // nav的模糊特效
   const blurPx = useTransform(scrollY, [0, 1000], [0, 8]);
   const bgAlpha = useTransform(scrollY, [0, 1000], [0, 0.16]);
-  const shadowA = useTransform(scrollY, [0, 1000], [0, 0.35]);
-  const navHeight = useTransform(scrollY, [0, 1000], [72, 52]);
-  const navHeightSpring = useSpring(navHeight, { stiffness: 300, damping: 30 });
-
   const blurFilter = useMotionTemplate`blur(${blurPx}px)`;
   const navBg = useMotionTemplate`rgba(15, 16, 20, ${bgAlpha})`;
+  const shadowA = useTransform(scrollY, [0, 1000], [0, 0.35]);
   const navShadow = useMotionTemplate`0 10px 30px rgba(0, 0, 0, ${shadowA})`;
+  const navHeight = useTransform(scrollY, [0, 1000], [150, 120]);
+  const navHeightSpring = useSpring(navHeight, { stiffness: 300, damping: 30 });
+  const navFont = useTransform(scrollY, [0, 1000], [28, 16]);
+  const gap = useTransform(scrollY, [0, 1000], [24, 12]);
+  const padY = useTransform(scrollY, [0, 1000], [12, 6]);
 
-  // --- 新增：整個首屏的淡出/上推 ---
-  const heroOpacity = useTransform(scrollY, [0, 1000], [1, 0]); // 往下捲到 200px 完全透明
-  const heroY = useTransform(scrollY, [0, 1000], [0, -40]); // 可選：微微往上推，增強感覺
+  // 主頁特效參數 ===
+  const s1Opacity = useTransform(scrollY, [0, 1000], [1, 0]);
+  const s1Y = useTransform(scrollY, [0, 1000], [0, -40]);
+  const scaleLogo = useTransform(scrollY, [0, 1000], [1, 0.6]);
+
+  // About頁面
+  const s2Opacity = useTransform(scrollY, [0, 1000, 2000], [0, 1, 0]);
+  const s2Y = useTransform(scrollY, [1000, 2000], [0, -40]);
 
   return (
-    // 整頁背景是白色，捲動後就露出來
-    <Box
-      data-hero
-      sx={{
-        bgcolor: "#fff",
-        minHeight: "300vh",
-        position: "relative",
-      }}
-    >
-      {/* ★ Hero 包裝器：把首屏所有東西包起來，對 wrapper 做 opacity/y 動畫 */}
+    <Box sx={{ bgcolor: "#fff", minHeight: "300vh", position: "relative" }}>
+      {/* === 1) 導覽列：固定在最上方；不受 hero 的 opacity 影響 === */}
+      <Stack
+        component={motion.div}
+        direction="row"
+        style={{
+          height: navHeightSpring,
+          paddingTop: padY,
+          backgroundColor: navBg, // 半透明 + 背後毛玻璃
+          backdropFilter: blurFilter,
+          WebkitBackdropFilter: blurFilter,
+          boxShadow: navShadow,
+        }}
+        sx={{
+          position: "fixed",
+          left: 0,
+          right: 0,
+          zIndex: (t) => t.zIndex.appBar + 10, // 確保壓過背景圖
+          alignItems: "center",
+          justifyContent: "center",
+          px: 2,
+          pointerEvents: "auto",
+        }}
+      >
+        <Stack
+          component={motion.nav}
+          direction="row"
+          sx={{
+            width: "100%",
+            maxWidth: 960,
+            mx: "auto",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+          style={{ gap, fontSize: navFont }}
+        >
+          <NavItem to="/about">About</NavItem>
+          <NavItem to="/articles">Articles</NavItem>
+          <NavItem to="https://github.com/yuzheng91?tab=repositories">
+            Github
+          </NavItem>
+        </Stack>
+      </Stack>
+
+      {/* === 2) Hero：背景圖 + 標題 + 小字（自己淡出/上推） === */}
       <Box
         component={motion.div}
-        style={{ opacity: heroOpacity, y: heroY }}
+        style={{ opacity: s1Opacity, y: s1Y }}
         sx={{ position: "relative", height: "100vh", width: "100%" }}
       >
-        {/* 背景圖（填滿首屏高度） */}
+        {/* 背景圖鋪滿首屏 */}
         <Box
           sx={{
             position: "absolute",
@@ -59,53 +98,12 @@ export default function Entrance() {
           }}
         />
 
-        {/* 上方導覽（固定在視窗，會一起淡出，因為包在 hero wrapper） */}
-        <Stack
-          component={motion.div}
-          direction="row"
-          style={{
-            height: navHeightSpring,
-            paddingTop: padY,
-            backgroundColor: navBg,
-            backdropFilter: blurFilter,
-            WebkitBackdropFilter: blurFilter, // Safari
-            boxShadow: navShadow,
-          }}
-          sx={{
-            position: "fixed",
-            top: { xs: 16, sm: 28 },
-            left: 0,
-            right: 0,
-            alignItems: "center",
-            justifyContent: "center",
-            zIndex: 3, // 在背景圖與標題之上
-            px: 2,
-          }}
-        >
-          <Stack
-            direction="row"
-            sx={{
-              width: "100%",
-              maxWidth: 960,
-              mx: "auto",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-            style={{ gap }}
-          >
-            <NavItem to="/about">About</NavItem>
-            <NavItem to="/articles">Articles</NavItem>
-            <NavItem to="https://github.com/yuzheng91?tab=repositories">
-              Github
-            </NavItem>
-          </Stack>
-        </Stack>
-
+        {/* 中央大標 */}
         <Typography
           component={motion.h1}
           style={{
             scale: scaleLogo,
-            translateX: "-50%", // ← 把位移也放進 style（同一個 transform 管道）
+            translateX: "-50%",
             translateY: "-50%",
           }}
           sx={{
@@ -144,15 +142,24 @@ export default function Entrance() {
         </Typography>
       </Box>
 
-      {/* 底下內容：白底（真正被露出來的區域） */}
-      <Box sx={{ width: "100%", mx: "auto", px: 2, py: 6 }}>
-        <Typography variant="h4" gutterBottom>
-          Welcome
-        </Typography>
-        <Typography paragraph>
-          這裡放你的內容。往下捲時，上面的首屏會逐漸透明，露出這個白底區塊。
-        </Typography>
-        {/* …更多內容 */}
+      {/* === 3) 下面內容區：白底會在 hero 淡出時露出 === */}
+      <Box
+        component={motion.div}
+        style={{ opacity: s2Opacity, y: s2Y }}
+        sx={{ position: "relative", height: "100vh", width: "100%" }}
+      >
+        {/* 背景圖鋪滿首屏 */}
+        <Box
+          sx={{
+            position: "absolute",
+            inset: 0,
+            backgroundImage: "url('/background2.jpg')",
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            backgroundRepeat: "no-repeat",
+            zIndex: 2,
+          }}
+        />
       </Box>
     </Box>
   );
@@ -173,7 +180,6 @@ function NavItem({ to, children }) {
       sx={{
         color: "#fff",
         textDecoration: "none",
-        fontSize: { xs: 14, sm: 16 },
         opacity: 0.9,
         transition: "opacity .2s ease, transform .2s ease",
       }}
