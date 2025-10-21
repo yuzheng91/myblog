@@ -95,6 +95,8 @@ export default function Entrance() {
             backgroundPosition: "center",
             backgroundRepeat: "no-repeat",
             zIndex: 1,
+            maskImage:
+              "linear-gradient(to bottom, rgba(0,0,0,1) 70%, rgba(0,0,0,0) 100%)",
           }}
         />
 
@@ -153,7 +155,7 @@ export default function Entrance() {
           sx={{
             position: "absolute",
             inset: 0,
-            backgroundImage: "url('/background2.jpg')",
+            //backgroundImage: "url('/background2.jpg')",
             backgroundSize: "cover",
             backgroundPosition: "center",
             backgroundRepeat: "no-repeat",
