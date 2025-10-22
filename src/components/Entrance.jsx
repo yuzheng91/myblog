@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Typography, Stack } from "@mui/material";
+import { Box, Typography, Stack, Avatar } from "@mui/material";
 import { Link } from "react-router-dom";
 import {
   motion,
@@ -33,6 +33,8 @@ export default function Entrance() {
   // About頁面
   const s2Opacity = useTransform(scrollY, [0, 1000, 2000], [0, 1, 0]);
   const s2Y = useTransform(scrollY, [1000, 2000], [0, -40]);
+  const MotionAvatar = motion(Avatar);
+  const MotionBox = motion(Box);
 
   return (
     <Box sx={{ bgcolor: "#fff", minHeight: "300vh", position: "relative" }}>
@@ -151,17 +153,59 @@ export default function Entrance() {
         sx={{ position: "relative", height: "100vh", width: "100%" }}
       >
         {/* 背景圖鋪滿首屏 */}
-        <Box
+        <MotionBox
           sx={{
-            position: "absolute",
-            inset: 0,
-            //backgroundImage: "url('/background2.jpg')",
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-            backgroundRepeat: "no-repeat",
-            zIndex: 2,
+            display: "flex",
+            height: "100vh",
+            width: "100vw",
+            backgroundColor: "#fff",
           }}
-        />
+        >
+          <MotionBox
+            sx={{
+              display: "flex",
+              gap: { xs: 2, md: 4 },
+            }}
+          >
+            <MotionAvatar
+              initial={{ x: 100, y: 200, opacity: 0 }}
+              whileInView={{ y: 50, opacity: 1 }}
+              transition={{ delay: 0.4, duration: 1.5, ease: "easeOut" }}
+              viewport={{ once: false, amount: 0.000001 }} // once: 只播放一次；amount: 觸發時機
+              src="/avatar.jpg"
+              sx={{
+                width: 300,
+                height: 300,
+                boxShadow: "0 4px 20px rgba(0,0,0,.3)",
+              }}
+            />
+            <MotionBox
+              sx={{
+                flex: 1,
+                p: { xs: 2.5, md: 4 },
+                borderRadius: 3,
+                boxShadow: "0 10px 30px rgba(0,0,0,.12)",
+                backgroundColor: "transparent",
+                maxWidth: 720,
+                height: 320,
+              }}
+              initial={{ x: 90, y: 200, opacity: 0 }}
+              whileInView={{ y: 50, opacity: 1 }}
+              transition={{ delay: 0.15, duration: 0.8, ease: "easeOut" }}
+              viewport={{ once: true, amount: 0.3 }}
+            >
+              <Typography variant="h4" sx={{ mb: 1.5, fontWeight: 700 }}>
+                Hi, I’m Yu Zheng
+              </Typography>
+              <Typography variant="body1" sx={{ lineHeight: 1.9 }}>
+                Full-stack engineer（React /
+                Django）。喜歡把設計稿變成高效能、可維護的網站，
+                也研究量化交易、資料工程與教學設計。這塊區域可以放你的簡短自介、技能標籤、
+                或是行動按鈕（CTA）。
+              </Typography>
+            </MotionBox>
+          </MotionBox>
+        </MotionBox>
       </Box>
     </Box>
   );
