@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Typography, Stack, Avatar } from "@mui/material";
+import { Box, Typography, Stack, Avatar, Divider } from "@mui/material";
 import { Link } from "react-router-dom";
 import {
   motion,
@@ -8,6 +8,10 @@ import {
   useSpring,
   useMotionTemplate,
 } from "framer-motion";
+
+import EducationItem from "./EducationItem";
+import SkillItem from "./SkillItem";
+import Footer from "./Footer";
 
 export default function Entrance() {
   const { scrollY } = useScroll();
@@ -33,11 +37,11 @@ export default function Entrance() {
   // About頁面
   const s2Opacity = useTransform(scrollY, [0, 1000, 2000], [0, 1, 0]);
   const s2Y = useTransform(scrollY, [1000, 2000], [0, -40]);
-  const MotionAvatar = motion(Avatar);
-  const MotionBox = motion(Box);
+  const MotionAvatar = motion.create(Avatar);
+  const MotionBox = motion.create(Box);
 
   return (
-    <Box sx={{ bgcolor: "#fff", minHeight: "300vh", position: "relative" }}>
+    <Box sx={{ bgcolor: "#fff", minHeight: "200vh", position: "relative" }}>
       {/* === 1) 導覽列：固定在最上方；不受 hero 的 opacity 影響 === */}
       <Stack
         component={motion.div}
@@ -147,66 +151,107 @@ export default function Entrance() {
       </Box>
 
       {/* === 3) 下面內容區：白底會在 hero 淡出時露出 === */}
-      <Box
-        component={motion.div}
+      <MotionBox
+        component="section"
         style={{ opacity: s2Opacity, y: s2Y }}
-        sx={{ position: "relative", height: "100vh", width: "100%" }}
+        sx={{
+          display: "flex",
+          flexDirection: "column", // 整個 section 垂直排列
+          alignItems: "center",
+          justifyContent: "center",
+          py: { xs: 6, md: 10 },
+          px: { xs: 2, md: 4 },
+          backgroundColor: "#fff",
+          minHeight: "100vh",
+        }}
       >
-        {/* 背景圖鋪滿首屏 */}
-        <MotionBox
+        {/* 上半區：Avatar + 自我介紹 */}
+        <Box
           sx={{
             display: "flex",
-            height: "100vh",
-            width: "100vw",
-            backgroundColor: "#fff",
+            flexDirection: { xs: "column", md: "row" }, // 手機垂直，桌機水平
+            alignItems: "center",
+            justifyContent: "center",
+            gap: { xs: 3, md: 6 },
+            maxWidth: 1080,
+            width: "100%",
           }}
         >
-          <MotionBox
+          <MotionAvatar
+            src="/avatar.jpg"
+            alt="Yu-Zheng Ma"
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1 }}
+            viewport={{ once: true }}
             sx={{
-              display: "flex",
-              gap: { xs: 2, md: 4 },
+              width: { xs: 200, md: 260 },
+              height: { xs: 200, md: 260 },
+              boxShadow: "0 6px 18px rgba(0,0,0,.2)",
+              flexShrink: 0,
+            }}
+          />
+
+          <Box
+            sx={{
+              flex: 1,
+              maxWidth: 700,
+              textAlign: { xs: "center", md: "left" },
             }}
           >
-            <MotionAvatar
-              initial={{ x: 100, y: 200, opacity: 0 }}
-              whileInView={{ y: 50, opacity: 1 }}
-              transition={{ delay: 0.4, duration: 1.5, ease: "easeOut" }}
-              viewport={{ once: false, amount: 0.000001 }} // once: 只播放一次；amount: 觸發時機
-              src="/avatar.jpg"
-              sx={{
-                width: 300,
-                height: 300,
-                boxShadow: "0 4px 20px rgba(0,0,0,.3)",
-              }}
-            />
-            <MotionBox
-              sx={{
-                flex: 1,
-                p: { xs: 2.5, md: 4 },
-                borderRadius: 3,
-                boxShadow: "0 10px 30px rgba(0,0,0,.12)",
-                backgroundColor: "transparent",
-                maxWidth: 720,
-                height: 320,
-              }}
-              initial={{ x: 90, y: 200, opacity: 0 }}
-              whileInView={{ y: 50, opacity: 1 }}
-              transition={{ delay: 0.15, duration: 0.8, ease: "easeOut" }}
-              viewport={{ once: true, amount: 0.3 }}
-            >
-              <Typography variant="h4" sx={{ mb: 1.5, fontWeight: 700 }}>
-                Hi, I’m Yu Zheng
-              </Typography>
-              <Typography variant="body1" sx={{ lineHeight: 1.9 }}>
-                Full-stack engineer（React /
-                Django）。喜歡把設計稿變成高效能、可維護的網站，
-                也研究量化交易、資料工程與教學設計。這塊區域可以放你的簡短自介、技能標籤、
-                或是行動按鈕（CTA）。
-              </Typography>
-            </MotionBox>
-          </MotionBox>
-        </MotionBox>
-      </Box>
+            <Typography variant="h4" sx={{ mb: 1.5, fontWeight: 700 }}>
+              Hi, I’m Yu-Zheng Ma
+            </Typography>
+            <Typography variant="body1" sx={{ lineHeight: 1.9 }}>
+              Welcome to my blog! I am determined to become a great software
+              engineer, especially by strengthening my skills in full-stack
+              development, cloud technologies, and Docker. The content I share
+              here includes technical articles, personal insights, and journal
+              entries. The road hasn't been easy, but I'm grateful for the
+              progress I've made and hope to keep my passion alive as I move
+              forward.
+            </Typography>
+          </Box>
+        </Box>
+
+        {/* 分隔線 */}
+        <Divider sx={{ my: 6, width: "80%", maxWidth: 960 }} />
+
+        {/* 下半區：Education */}
+        <Box sx={{ maxWidth: 960, width: "100%" }}>
+          <Typography variant="h5" sx={{ fontWeight: 800, mb: 3 }}>
+            Education
+          </Typography>
+
+          <EducationItem
+            logo="/ncku.png"
+            degree="Master’s Degree"
+            institute="Institute of Computer and Communication Engineering"
+            school="National Cheng Kung University (NCKU)"
+            period="2025 – 2027"
+          />
+
+          <Divider sx={{ my: 2, opacity: 0.5 }} />
+
+          <EducationItem
+            logo="/nycu.png"
+            degree="Bachelor’s Degree"
+            institute="Department of Computer Science"
+            school="National Yang Ming Chiao Tung University (NYCU)"
+            period="2020 – 2024"
+          />
+
+          <Divider sx={{ my: 2, opacity: 0.5 }} />
+
+          <EducationItem
+            logo="/hsnu.jfif"
+            degree="High School"
+            school="The Affiliated Senior High School of National Taiwan Normal University"
+            period="2017 – 2020"
+          />
+        </Box>
+      </MotionBox>
+      <Footer />
     </Box>
   );
 }
