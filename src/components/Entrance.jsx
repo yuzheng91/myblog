@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { Box, Typography, Stack, Avatar, Divider } from "@mui/material";
 import { Link } from "react-router-dom";
 import {
@@ -9,12 +9,20 @@ import {
   useMotionTemplate,
 } from "framer-motion";
 
+import NavItem from "./NavItem";
 import EducationItem from "./EducationItem";
+import Awards from "./Awards";
 import SkillItem from "./SkillItem";
 import Footer from "./Footer";
 
 export default function Entrance() {
   const { scrollY } = useScroll();
+
+  const SECTION = {
+    homeStart: 0,
+    aboutStart: 1000,
+    awardsStart: 2000,
+  };
 
   // nav的模糊特效
   const blurPx = useTransform(scrollY, [0, 1000], [0, 8]);
@@ -33,12 +41,35 @@ export default function Entrance() {
   const s1Opacity = useTransform(scrollY, [0, 1000], [1, 0]);
   const s1Y = useTransform(scrollY, [0, 1000], [0, -40]);
   const scaleLogo = useTransform(scrollY, [0, 1000], [1, 0.6]);
+  const homeColor = useTransform(
+    scrollY,
+    [0, 900, 1100, 1200],
+    ["#64b5f6", "#64b5f6", "#64b5f6", "#ffffff"]
+  );
 
   // About頁面
-  const s2Opacity = useTransform(scrollY, [0, 1000, 2000], [0, 1, 0]);
+  const s2Opacity = useTransform(scrollY, [0, 1500, 2000], [0, 1, 0]);
   const s2Y = useTransform(scrollY, [1000, 2000], [0, -40]);
   const MotionAvatar = motion.create(Avatar);
   const MotionBox = motion.create(Box);
+  const aboutColor = useTransform(
+    scrollY,
+    [0, 900, 1000, 2000, 2100],
+    ["#ffffff", "#ffffff", "#64b5f6", "#64b5f6", "#ffffff"]
+  );
+
+  // Awards
+  const s3Opacity = useTransform(scrollY, [0, 2500, 3000], [0, 1, 0]);
+  const s3Y = useTransform(scrollY, [1000, 2000], [0, -40]);
+  const awardsColor = useTransform(
+    scrollY,
+    [0, 1900, 2000, 3000, 3100],
+    ["#ffffff", "#ffffff", "#64b5f6", "#64b5f6", "#ffffff"]
+  );
+
+  const scrollToY = useCallback((top) => {
+    window.scrollTo({ top, behavior: "smooth" });
+  }, []);
 
   return (
     <Box sx={{ bgcolor: "#fff", minHeight: "200vh", position: "relative" }}>
@@ -77,8 +108,28 @@ export default function Entrance() {
           }}
           style={{ gap, fontSize: navFont }}
         >
-          <NavItem to="/about">About</NavItem>
-          <NavItem to="/articles">Articles</NavItem>
+          <NavItem
+            asButton
+            onClick={() => scrollToY(SECTION.homeStart)}
+            colorMV={homeColor}
+          >
+            Home
+          </NavItem>
+
+          <NavItem
+            asButton
+            onClick={() => scrollToY(SECTION.aboutStart)}
+            colorMV={aboutColor}
+          >
+            About
+          </NavItem>
+          <NavItem
+            asButton
+            onClick={() => scrollToY(SECTION.awardsStart)}
+            colorMV={awardsColor}
+          >
+            Awards
+          </NavItem>
           <NavItem to="https://github.com/yuzheng91?tab=repositories">
             Github
           </NavItem>
@@ -250,32 +301,10 @@ export default function Entrance() {
             period="2017 – 2020"
           />
         </Box>
-      </MotionBox>
+      </MotionBox >
+      <MotionBox style={{ opacity: s3Opacity, y: s3Y}}/>
+      <Awards />
       <Footer />
-    </Box>
-  );
-}
-
-function NavItem({ to, children }) {
-  const isExternal = typeof to === "string" && to.startsWith("http");
-  const baseProps = isExternal
-    ? { component: "a", href: to, target: "_blank", rel: "noopener noreferrer" }
-    : { component: Link, to };
-
-  return (
-    <Box
-      {...baseProps}
-      component={motion.a}
-      whileHover={{ y: -1, opacity: 1 }}
-      whileTap={{ scale: 0.98 }}
-      sx={{
-        color: "#fff",
-        textDecoration: "none",
-        opacity: 0.9,
-        transition: "opacity .2s ease, transform .2s ease",
-      }}
-    >
-      {children}
     </Box>
   );
 }
