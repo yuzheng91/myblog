@@ -12,6 +12,7 @@ import {
 import NavItem from "./NavItem";
 import EducationItem from "./EducationItem";
 import Awards from "./Awards";
+import Contact from "./Contact";
 import SkillItem from "./SkillItem";
 import Footer from "./Footer";
 
@@ -22,6 +23,7 @@ export default function Entrance() {
     homeStart: 0,
     aboutStart: 1000,
     awardsStart: 2000,
+    contact: 3000,
   };
 
   // nav的模糊特效
@@ -54,7 +56,7 @@ export default function Entrance() {
   const MotionBox = motion.create(Box);
   const aboutColor = useTransform(
     scrollY,
-    [0, 900, 1000, 2000, 2100],
+    [0, 900, 1000, 1900, 2100],
     ["#ffffff", "#ffffff", "#64b5f6", "#64b5f6", "#ffffff"]
   );
 
@@ -67,6 +69,12 @@ export default function Entrance() {
     ["#ffffff", "#ffffff", "#64b5f6", "#64b5f6", "#ffffff"]
   );
 
+  // Contact
+  const contactColor = useTransform(
+    scrollY,
+    [0, 2900, 3000],
+    ["#ffffff", "#ffffff", "#64b5f6"]
+  );
   const scrollToY = useCallback((top) => {
     window.scrollTo({ top, behavior: "smooth" });
   }, []);
@@ -130,8 +138,12 @@ export default function Entrance() {
           >
             Awards
           </NavItem>
-          <NavItem to="https://github.com/yuzheng91?tab=repositories">
-            Github
+          <NavItem
+            asButton
+            onClick={() => scrollToY(SECTION.contactStart)}
+            colorMV={contactColor}
+          >
+            Contact
           </NavItem>
         </Stack>
       </Stack>
@@ -301,9 +313,10 @@ export default function Entrance() {
             period="2017 – 2020"
           />
         </Box>
-      </MotionBox >
-      <MotionBox style={{ opacity: s3Opacity, y: s3Y}}/>
+      </MotionBox>
+      <MotionBox style={{ opacity: s3Opacity, y: s3Y }} />
       <Awards />
+      <Contact />
       <Footer />
     </Box>
   );
