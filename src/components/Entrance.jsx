@@ -1,6 +1,5 @@
 import React, { useCallback } from "react";
 import { Box, Typography, Stack, Avatar, Divider } from "@mui/material";
-import { Link } from "react-router-dom";
 import {
   motion,
   useScroll,
@@ -13,8 +12,11 @@ import NavItem from "./NavItem";
 import EducationItem from "./EducationItem";
 import Awards from "./Awards";
 import Contact from "./Contact";
-import SkillItem from "./SkillItem";
 import Footer from "./Footer";
+
+// ===== 路徑工具：自動加上 BASE_URL 前綴 =====
+const BASE = import.meta.env.BASE_URL;
+const asset = (p) => `${BASE}${p}`; // 參數不要加「/」
 
 export default function Entrance() {
   const { scrollY } = useScroll();
@@ -23,10 +25,10 @@ export default function Entrance() {
     homeStart: 0,
     aboutStart: 1000,
     awardsStart: 2000,
-    contact: 3000,
+    contactStart: 3000,
   };
 
-  // nav的模糊特效
+  // ===== nav 的模糊特效 =====
   const blurPx = useTransform(scrollY, [0, 1000], [0, 8]);
   const bgAlpha = useTransform(scrollY, [0, 1000], [0, 0.16]);
   const blurFilter = useMotionTemplate`blur(${blurPx}px)`;
@@ -39,7 +41,7 @@ export default function Entrance() {
   const gap = useTransform(scrollY, [0, 1000], [24, 12]);
   const padY = useTransform(scrollY, [0, 1000], [12, 6]);
 
-  // 主頁特效參數 ===
+  // ===== 各區動畫控制 =====
   const s1Opacity = useTransform(scrollY, [0, 1000], [1, 0]);
   const s1Y = useTransform(scrollY, [0, 1000], [0, -40]);
   const scaleLogo = useTransform(scrollY, [0, 1000], [1, 0.6]);
@@ -49,7 +51,6 @@ export default function Entrance() {
     ["#64b5f6", "#64b5f6", "#64b5f6", "#ffffff"]
   );
 
-  // About頁面
   const s2Opacity = useTransform(scrollY, [0, 1500, 2000], [0, 1, 0]);
   const s2Y = useTransform(scrollY, [1000, 2000], [0, -40]);
   const MotionAvatar = motion.create(Avatar);
@@ -60,7 +61,6 @@ export default function Entrance() {
     ["#ffffff", "#ffffff", "#64b5f6", "#64b5f6", "#ffffff"]
   );
 
-  // Awards
   const s3Opacity = useTransform(scrollY, [0, 2500, 3000], [0, 1, 0]);
   const s3Y = useTransform(scrollY, [1000, 2000], [0, -40]);
   const awardsColor = useTransform(
@@ -69,26 +69,26 @@ export default function Entrance() {
     ["#ffffff", "#ffffff", "#64b5f6", "#64b5f6", "#ffffff"]
   );
 
-  // Contact
   const contactColor = useTransform(
     scrollY,
     [0, 2900, 3000],
     ["#ffffff", "#ffffff", "#64b5f6"]
   );
+
   const scrollToY = useCallback((top) => {
     window.scrollTo({ top, behavior: "smooth" });
   }, []);
 
   return (
     <Box sx={{ bgcolor: "#fff", minHeight: "200vh", position: "relative" }}>
-      {/* === 1) 導覽列：固定在最上方；不受 hero 的 opacity 影響 === */}
+      {/* === 1) 導覽列 === */}
       <Stack
         component={motion.div}
         direction="row"
         style={{
           height: navHeightSpring,
           paddingTop: padY,
-          backgroundColor: navBg, // 半透明 + 背後毛玻璃
+          backgroundColor: navBg,
           backdropFilter: blurFilter,
           WebkitBackdropFilter: blurFilter,
           boxShadow: navShadow,
@@ -97,11 +97,10 @@ export default function Entrance() {
           position: "fixed",
           left: 0,
           right: 0,
-          zIndex: (t) => t.zIndex.appBar + 10, // 確保壓過背景圖
+          zIndex: (t) => t.zIndex.appBar + 10,
           alignItems: "center",
           justifyContent: "center",
           px: 2,
-          pointerEvents: "auto",
         }}
       >
         <Stack
@@ -123,7 +122,6 @@ export default function Entrance() {
           >
             Home
           </NavItem>
-
           <NavItem
             asButton
             onClick={() => scrollToY(SECTION.aboutStart)}
@@ -148,18 +146,17 @@ export default function Entrance() {
         </Stack>
       </Stack>
 
-      {/* === 2) Hero：背景圖 + 標題 + 小字（自己淡出/上推） === */}
+      {/* === 2) Hero 區 === */}
       <Box
         component={motion.div}
         style={{ opacity: s1Opacity, y: s1Y }}
         sx={{ position: "relative", height: "100vh", width: "100%" }}
       >
-        {/* 背景圖鋪滿首屏 */}
         <Box
           sx={{
             position: "absolute",
             inset: 0,
-            backgroundImage: "url('/background.jpg')",
+            backgroundImage: `url(${asset("background.jpg")})`,
             backgroundSize: "cover",
             backgroundPosition: "center",
             backgroundRepeat: "no-repeat",
@@ -169,7 +166,6 @@ export default function Entrance() {
           }}
         />
 
-        {/* 中央大標 */}
         <Typography
           component={motion.h1}
           style={{
@@ -194,7 +190,6 @@ export default function Entrance() {
           YuZheng
         </Typography>
 
-        {/* 下方小字 */}
         <Typography
           sx={{
             position: "absolute",
@@ -213,13 +208,13 @@ export default function Entrance() {
         </Typography>
       </Box>
 
-      {/* === 3) 下面內容區：白底會在 hero 淡出時露出 === */}
+      {/* === 3) About 區 === */}
       <MotionBox
         component="section"
         style={{ opacity: s2Opacity, y: s2Y }}
         sx={{
           display: "flex",
-          flexDirection: "column", // 整個 section 垂直排列
+          flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
           py: { xs: 6, md: 10 },
@@ -228,11 +223,10 @@ export default function Entrance() {
           minHeight: "100vh",
         }}
       >
-        {/* 上半區：Avatar + 自我介紹 */}
         <Box
           sx={{
             display: "flex",
-            flexDirection: { xs: "column", md: "row" }, // 手機垂直，桌機水平
+            flexDirection: { xs: "column", md: "row" },
             alignItems: "center",
             justifyContent: "center",
             gap: { xs: 3, md: 6 },
@@ -241,7 +235,7 @@ export default function Entrance() {
           }}
         >
           <MotionAvatar
-            src="/avatar.jpg"
+            src={asset("avatar.jpg")}
             alt="Yu-Zheng Ma"
             initial={{ opacity: 0, y: 50 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -277,17 +271,15 @@ export default function Entrance() {
           </Box>
         </Box>
 
-        {/* 分隔線 */}
         <Divider sx={{ my: 6, width: "80%", maxWidth: 960 }} />
 
-        {/* 下半區：Education */}
         <Box sx={{ maxWidth: 960, width: "100%" }}>
           <Typography variant="h5" sx={{ fontWeight: 800, mb: 3 }}>
             Education
           </Typography>
 
           <EducationItem
-            logo="/ncku.png"
+            logo={asset("ncku.png")}
             degree="Master’s Degree"
             institute="Institute of Computer and Communication Engineering"
             school="National Cheng Kung University (NCKU)"
@@ -297,7 +289,7 @@ export default function Entrance() {
           <Divider sx={{ my: 2, opacity: 0.5 }} />
 
           <EducationItem
-            logo="/nycu.png"
+            logo={asset("nycu.png")}
             degree="Bachelor’s Degree"
             institute="Department of Computer Science"
             school="National Yang Ming Chiao Tung University (NYCU)"
@@ -307,17 +299,20 @@ export default function Entrance() {
           <Divider sx={{ my: 2, opacity: 0.5 }} />
 
           <EducationItem
-            logo="/hsnu.jfif"
+            logo={asset("hsnu.jfif")}
             degree="High School"
             school="The Affiliated Senior High School of National Taiwan Normal University"
             period="2017 – 2020"
           />
         </Box>
       </MotionBox>
-      <MotionBox style={{ opacity: s3Opacity, y: s3Y }} />
-      <Awards />
-      <Contact />
-      <Footer />
+
+      {/* === 4) Awards + Contact + Footer === */}
+      <motion.div style={{ opacity: s3Opacity, y: s3Y }}>
+        <Awards />
+        <Contact />
+        <Footer />
+      </motion.div>
     </Box>
   );
 }
