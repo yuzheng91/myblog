@@ -306,13 +306,9 @@ export default function Entrance() {
           />
         </Box>
       </MotionBox>
-
-      {/* === 4) Awards + Contact + Footer === */}
-      <motion.div style={{ opacity: s3Opacity, y: s3Y }}>
-        <Awards />
-        <Contact />
-        <Footer />
-      </motion.div>
+      <Awards />
+      <Contact />
+      <Footer />
     </Box>
   );
 }
