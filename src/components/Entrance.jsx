@@ -260,10 +260,12 @@ export default function Entrance() {
               Hi, I’m Yu-Zheng Ma
             </Typography>
             <Typography variant="body1" sx={{ lineHeight: 1.9 }}>
-              Welcome to my blog! I am determined to become a great software
+              Welcome to my profile! I am determined to become a great software
               engineer, especially by strengthening my skills in full-stack
-              development, cloud technologies, and Docker. The content I share
-              here includes technical articles, personal insights, and journal
+              development, cloud technologies, and Containerization. 
+              Also, I am very intrested in AI and Machine Learning.
+              I am eager to research and explore cutting-dege technology (e.g., AI agents, n8n, etc.).
+              The content I share here includes technical articles, personal insights, and journal
               entries. The road hasn't been easy, but I'm grateful for the
               progress I've made and hope to keep my passion alive as I move
               forward.
