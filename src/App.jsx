@@ -5,9 +5,7 @@ import "./App.css";
 import { Routes, Route } from "react-router-dom";
 import { CssBaseline } from "@mui/material";
 
-import Home from "./components/Home.jsx";
 import Entrance from "./components/Entrance.jsx";
-import About from "./components/About.jsx";
 
 function App() {
   const [count, setCount] = useState(0);
@@ -16,9 +14,7 @@ function App() {
     <>
       <CssBaseline />
       <Routes>
-        <Route path="/home" element={<Home />}></Route>
-        <Route path="/" element={<Entrance />}></Route>
-        <Route path="/about" element={<About />}></Route>
+        <Route path="/profile/" element={<Entrance />}></Route>
       </Routes>
     </>
   );
